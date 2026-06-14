@@ -1249,10 +1249,12 @@
     <div class="form-actions">
       <div class="photo-input-wrapper" style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 10px;">
         <button class="photo-btn" onclick="document.getElementById('photoInput').click()">📸 Выбрать фото</button>
-        <button class="photo-btn" onclick="document.getElementById('barcodeInput').click()">📷 Сканировать штрихкод</button>
+        <button class="photo-btn" onclick="startBarcodeScanner()">📷 Сканировать штрихкод</button>
+        <button class="photo-btn" id="stopBarcodeBtn" style="display:none; background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="stopBarcodeScanner()">✕ Остановить</button>
         <input type="file" id="photoInput" accept="image/*" aria-label="Загрузить фото товара">
-        <input type="file" id="barcodeInput" accept="image/*" style="display:none" aria-label="Загрузить фото штрихкода" onchange="handleBarcodeImage(event)">
+        <input type="file" id="barcodeInput" accept="image/*" capture="environment" style="display:none" aria-label="Загрузить фото штрихкода" onchange="handleBarcodeImage(event)">
       </div>
+      <video id="barcodeVideo" autoplay playsinline style="display:none; width:100%; max-width:420px; margin-top:10px; border-radius:14px; background:#000;"></video>
       <div class="button-group">
         <button onclick="addItem()">➕ Внести</button>
         <button onclick="clearDB()" title="Внимание: очистит всю базу" style="background: linear-gradient(135deg, var(--danger), #dc2626);">🗑️ Очистить</button>
@@ -1678,6 +1680,69 @@
   }
 
   // ========== PHOTO HANDLING ==========
+  let barcodeCodeReader = null;
+  let barcodeStream = null;
+
+  function updateBarcodeStatus(text) {
+    const status = document.getElementById('barcodeStatus');
+    if (status) status.textContent = text;
+  }
+
+  async function startBarcodeScanner() {
+    const video = document.getElementById('barcodeVideo');
+    const stopBtn = document.getElementById('stopBarcodeBtn');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      updateBarcodeStatus('Камера недоступна. Загрузите фото штрихкода.');
+      document.getElementById('barcodeInput').click();
+      return;
+    }
+
+    try {
+      barcodeCodeReader = new ZXing.BrowserMultiFormatReader();
+      barcodeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = barcodeStream;
+      video.style.display = 'block';
+      stopBtn.style.display = 'inline-block';
+      updateBarcodeStatus('Сканирование... Наведите камеру на штрихкод');
+
+      barcodeCodeReader.decodeFromVideoDevice(null, video, (result, err) => {
+        if (result) {
+          stopBarcodeScanner();
+          document.getElementById('code').value = result.text;
+          updateBarcodeStatus(`Штрихкод распознан: ${result.text}`);
+          fetchProductByBarcode(result.text);
+        } else if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.warn('Barcode scan error:', err);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      updateBarcodeStatus('Не удалось запустить камеру. Попробуйте загрузить фото штрихкода.');
+      document.getElementById('barcodeInput').click();
+    }
+  }
+
+  function stopBarcodeScanner() {
+    const video = document.getElementById('barcodeVideo');
+    const stopBtn = document.getElementById('stopBarcodeBtn');
+    if (barcodeCodeReader) {
+      barcodeCodeReader.reset();
+      barcodeCodeReader = null;
+    }
+    if (barcodeStream) {
+      barcodeStream.getTracks().forEach(track => track.stop());
+      barcodeStream = null;
+    }
+    if (video) {
+      video.srcObject = null;
+      video.style.display = 'none';
+    }
+    if (stopBtn) {
+      stopBtn.style.display = 'none';
+    }
+    updateBarcodeStatus('Сканирование остановлено.');
+  }
+
   async function handleBarcodeImage(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -1702,10 +1767,10 @@
           const codeReader = new ZXing.BrowserMultiFormatReader();
           const result = await codeReader.decodeFromImageElement(img);
           document.getElementById('code').value = result.text;
-          document.getElementById('barcodeStatus').textContent = `Штрихкод распознан: ${result.text}`;
+          updateBarcodeStatus(`Штрихкод распознан: ${result.text}`);
           fetchProductByBarcode(result.text);
         } catch (err) {
-          alert('Не удалось распознать штрихкод. Попробуйте другое фото или обрезайте изображение ближе к коду.');
+          alert('Не удалось распознать штрихкод. Попробуйте другое фото или обрежьте изображение ближе к коду.');
           console.error(err);
         }
       };
@@ -2349,8 +2414,33 @@
 
   // ========== SERVICE WORKER ==========
   if ('serviceWorker' in navigator) {
+    let refreshing = false;
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+
     navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker зарегистрирован'))
+      .then(reg => {
+        console.log('Service Worker зарегистрирован', reg);
+
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      })
       .catch(err => console.log('Ошибка Service Worker:', err));
   }
 
