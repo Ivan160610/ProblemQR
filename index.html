@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Система управления проблемными кодами товаров">
-  <title>Проблемные коды товаров PRO MAX</title>
+  <title>Проблемные ШК и Коды маркировок</title>
   <link rel="manifest" href="manifest.json">
   <script src="JS/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.10/umd/index.min.js"></script>
@@ -1746,6 +1746,17 @@
     </div>
 
     <div style="border-top: 1px solid var(--border); padding: 15px 0;">
+      <h3>🌐 Сервер синхронизации</h3>
+      <div class="row">
+        <input id="apiBaseInput" placeholder="http://192.168.1.42:3000 или https://abcd1234.ngrok.io" aria-label="URL API" style="flex:1; padding:10px;">
+        <button type="button" onclick="saveApiBase()">Сохранить</button>
+        <button type="button" onclick="clearApiBase()">Сбросить</button>
+      </div>
+      <p class="storage-info">Текущий сервер: <strong id="currentApiBase"></strong></p>
+      <p class="storage-info">Статус синхронизации: <strong id="remoteSyncStatus"></strong></p>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding: 15px 0;">
       <h3>ℹ️ Информация</h3>
       <p>Версия: <strong>2.0</strong></p>
       <p>Хранилище: <strong id="storageSize">0</strong> КБ из <strong>~5000</strong> КБ</p>
@@ -1760,7 +1771,8 @@
   const HISTORY_KEY = 'pro_max_history';
   const BACKUP_KEY = 'pro_max_backups';
   const THEME_KEY = 'pro_max_theme';
-  const API_BASE = '/api';
+  const DEFAULT_API_BASE = window.location.protocol.startsWith('http') ? window.location.origin + '/api' : '/api';
+  let API_BASE = localStorage.getItem('pro_max_api') || DEFAULT_API_BASE;
   const REMOTE_SYNC_ENABLED = true;
   const REMOTE_SYNC_INTERVAL = 10000;
 
@@ -1789,6 +1801,7 @@
       }
 
       const payload = await response.json();
+      setSyncStatus('Данные успешно загружены', false);
       const remoteData = Array.isArray(payload.data) ? payload.data : [];
       const localData = db();
 
@@ -1803,6 +1816,7 @@
       }
     } catch (e) {
       console.warn('Remote load failed:', e);
+      setSyncStatus('Ошибка синхронизации', true);
     }
   };
 
@@ -1820,6 +1834,7 @@
       }
     } catch (e) {
       console.warn('Remote save failed:', e);
+      setSyncStatus('Ошибка отправки данных на сервер', true);
     }
   };
 
@@ -1893,6 +1908,45 @@
   applyTheme(initialTheme);
   if (!localStorage.getItem(THEME_KEY) && localStorage.theme) {
     localStorage.setItem(THEME_KEY, localStorage.theme);
+  }
+  updateApiBaseUI();
+
+  // ========== API BASE SETTINGS ==========
+  function saveApiBase() {
+    let val = (document.getElementById('apiBaseInput')?.value || '').trim();
+    if (!val) {
+      alert('Введите URL сервера (например https://example.com)');
+      return;
+    }
+    val = val.replace(/\/$/, '');
+    // Ensure API base ends with /api
+    if (!val.endsWith('/api')) val = val + '/api';
+    localStorage.setItem('pro_max_api', val);
+    API_BASE = localStorage.getItem('pro_max_api');
+    updateApiBaseUI();
+    alert('Сервер сохранён. Данные будут синхронизироваться с: ' + API_BASE);
+  }
+
+  function clearApiBase() {
+    localStorage.removeItem('pro_max_api');
+    API_BASE = '/api';
+    updateApiBaseUI();
+    alert('Сервер сброшен. Используется локальный \'/api\'');
+  }
+
+  function setSyncStatus(text, isError = false) {
+    const status = document.getElementById('remoteSyncStatus');
+    if (!status) return;
+    status.textContent = text;
+    status.style.color = isError ? '#dc2626' : '#10b981';
+  }
+
+  function updateApiBaseUI() {
+    const el = document.getElementById('currentApiBase');
+    if (el) el.textContent = API_BASE || DEFAULT_API_BASE;
+    const input = document.getElementById('apiBaseInput');
+    if (input) input.value = localStorage.getItem('pro_max_api') || '';
+    setSyncStatus('Ожидает подключения...', false);
   }
 
   // ========== AUTO BACKUP ==========

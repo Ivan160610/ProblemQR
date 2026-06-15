@@ -15,6 +15,15 @@ const ensureDataFile = () => {
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(path.join(__dirname)));
 
+// Simple CORS middleware to allow remote clients (phone/other origin) to access the API
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 app.get('/api/db', (req, res) => {
   try {
     ensureDataFile();
