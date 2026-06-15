@@ -38,11 +38,15 @@
     }
 
     body {
-      background: var(--bg);
+      background: radial-gradient(circle at top, rgba(99, 102, 241, 0.15), transparent 32%),
+                  radial-gradient(circle at 20% 20%, rgba(236, 72, 153, 0.12), transparent 28%),
+                  linear-gradient(180deg, var(--bg), rgba(249, 250, 251, 0.96));
       color: var(--text);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: all 0.3s ease;
+      transition: background 0.4s ease, color 0.3s ease;
       line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     body.dark,
@@ -69,7 +73,7 @@
     header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
-      padding: 40px 20px;
+      padding: 50px 20px;
       text-align: center;
       box-shadow: var(--shadow-lg);
       position: relative;
@@ -79,52 +83,79 @@
     header::before {
       content: '';
       position: absolute;
-      top: -50%;
+      top: -40%;
       right: -10%;
-      width: 300px;
-      height: 300px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 320px;
+      height: 320px;
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 50%;
-      animation: float 6s ease-in-out infinite;
+      filter: blur(1px);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 120px;
+      background: radial-gradient(circle at center top, rgba(255,255,255,0.16), transparent 70%);
+      pointer-events: none;
     }
 
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
+      50% { transform: translateY(-18px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
     }
 
     header h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-size: 2.6rem;
+      font-weight: 800;
       position: relative;
       z-index: 1;
       letter-spacing: -1px;
+      animation: fadeIn 0.8s ease both;
+      text-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
     }
 
     .wrap {
       max-width: 1600px;
       margin: 0 auto;
       padding: 30px 20px;
+      animation: fadeIn 0.7s ease both;
     }
 
     .card {
-      background: var(--card);
-      border-radius: 20px;
-      box-shadow: var(--shadow-md);
-      margin: 15px 0;
-      padding: 30px;
-      border: 1px solid var(--border);
-      transition: all 0.3s ease;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(249, 250, 251, 0.92));
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+      margin: 18px 0;
+      padding: 32px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      backdrop-filter: blur(10px);
     }
 
     body.dark .card {
-      background: var(--card-dark);
-      border-color: var(--border-dark);
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.98));
+      border-color: rgba(71, 85, 105, 0.4);
     }
 
     .card:hover {
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
+      box-shadow: 0 30px 90px rgba(15, 23, 42, 0.18);
+      transform: translateY(-6px);
+      border-color: rgba(99, 102, 241, 0.22);
     }
 
     .tabs {
@@ -132,36 +163,43 @@
       gap: 15px;
       margin-bottom: 30px;
       flex-wrap: wrap;
-      border-bottom: 2px solid var(--border);
+      border-bottom: 2px solid rgba(226, 232, 240, 0.7);
       padding-bottom: 15px;
     }
 
     body.dark .tabs {
-      border-bottom-color: var(--border-dark);
+      border-bottom-color: rgba(71, 85, 105, 0.7);
     }
 
     .tabs button {
       padding: 12px 24px;
       border: none;
-      background: transparent;
+      background: rgba(255, 255, 255, 0.18);
       color: var(--text-light);
       cursor: pointer;
       font-size: 1rem;
-      font-weight: 600;
-      border-radius: 10px 10px 0 0;
+      font-weight: 700;
+      border-radius: 999px;
       transition: all 0.3s ease;
       position: relative;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    body.dark .tabs button {
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .tabs button:hover {
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(99, 102, 241, 0.16);
       color: var(--primary);
+      transform: translateY(-1px);
     }
 
     .tabs button[aria-selected="true"] {
       color: var(--primary);
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(99, 102, 241, 0.15);
       border-bottom: 3px solid var(--primary);
+      box-shadow: inset 0 -2px 0 rgba(99, 102, 241, 0.25);
     }
 
     .tab {
@@ -170,7 +208,7 @@
 
     .tab.active {
       display: block;
-      animation: slideIn 0.3s ease;
+      animation: slideIn 0.3s ease both;
     }
 
     @keyframes slideIn {
@@ -219,62 +257,69 @@
     }
 
     input, select, textarea {
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      background: var(--card);
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(255, 255, 255, 0.92);
       color: var(--text);
       font-size: 1rem;
       font-family: inherit;
       transition: all 0.3s ease;
       flex: 1;
       min-width: 200px;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     body.dark input,
-    body.dark select {
-      background: var(--card-dark);
-      border-color: var(--border-dark);
+    body.dark select,
+    body.dark textarea {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(71, 85, 105, 0.6);
       color: var(--text-dark);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+      background: rgba(255, 255, 255, 1);
       transform: translateY(-2px);
     }
 
     button {
-      padding: 14px 28px;
+      padding: 15px 32px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: white;
       cursor: pointer;
       font-size: 1rem;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      font-weight: 700;
+      transition: all 0.25s ease;
+      box-shadow: 0 15px 35px rgba(99, 102, 241, 0.22);
       position: relative;
       overflow: hidden;
+      z-index: 1;
     }
 
     button::before {
       content: '';
       position: absolute;
       top: 0;
-      left: -100%;
-      width: 100%;
+      left: -120%;
+      width: 120%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.2);
-      transition: left 0.3s ease;
+      background: rgba(255, 255, 255, 0.18);
+      transform: skewX(-20deg);
+      transition: left 0.35s ease;
+      z-index: 0;
     }
 
     button:hover {
       background: linear-gradient(135deg, var(--primary-dark), var(--primary));
       transform: translateY(-3px);
-      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 18px 40px rgba(99, 102, 241, 0.32);
     }
 
     button:hover::before {
@@ -283,6 +328,7 @@
 
     button:active {
       transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(99, 102, 241, 0.26);
     }
 
     .input-with-button {
@@ -652,9 +698,9 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      animation: fadeIn 0.3s;
-      backdrop-filter: blur(5px);
+      background-color: rgba(10, 25, 47, 0.8);
+      animation: fadeIn 0.24s ease both;
+      backdrop-filter: blur(6px);
     }
 
     .modal.show {
@@ -664,20 +710,23 @@
     }
 
     .modal-content {
-      background: var(--card);
-      padding: 30px;
-      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.96);
+      padding: 32px;
+      border-radius: 24px;
       text-align: center;
       position: relative;
       max-width: 90%;
       max-height: 90%;
       overflow: auto;
-      box-shadow: var(--shadow-lg);
-      animation: slideUp 0.3s ease;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.16);
+      animation: slideUp 0.28s ease both;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(10px);
     }
 
     body.dark .modal-content {
-      background: var(--card-dark);
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(148, 163, 184, 0.18);
     }
 
     @keyframes slideUp {
