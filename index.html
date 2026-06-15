@@ -1521,11 +1521,11 @@
 
 <div class="wrap">
   <div class="tabs" role="tablist">
-    <button id="tab-main" onclick="showTab(event,'main')" role="tab" aria-selected="true" aria-controls="main">Главная</button>
-    <button id="tab-table" onclick="showTab(event,'table')" role="tab" aria-selected="false" aria-controls="table">База</button>
-    <button id="tab-history" onclick="showTab(event,'history')" role="tab" aria-selected="false" aria-controls="history">📜 История</button>
-    <button id="tab-analytics" onclick="showTab(event,'analytics')" role="tab" aria-selected="false" aria-controls="analytics">📊 Статистика</button>
-    <button id="tab-settings" onclick="showTab(event,'settings')" role="tab" aria-selected="false" aria-controls="settings">⚙️ Настройки</button>
+    <button type="button" id="tab-main" onclick="showTab(this,'main')" role="tab" aria-selected="true" aria-controls="main">Главная</button>
+    <button type="button" id="tab-table" onclick="showTab(this,'table')" role="tab" aria-selected="false" aria-controls="table">База</button>
+    <button type="button" id="tab-history" onclick="showTab(this,'history')" role="tab" aria-selected="false" aria-controls="history">📜 История</button>
+    <button type="button" id="tab-analytics" onclick="showTab(this,'analytics')" role="tab" aria-selected="false" aria-controls="analytics">📊 Статистика</button>
+    <button type="button" id="tab-settings" onclick="showTab(this,'settings')" role="tab" aria-selected="false" aria-controls="settings">⚙️ Настройки</button>
   </div>
 
   <div id="main" class="tab card active" role="tabpanel" aria-labelledby="tab-main">
@@ -2243,7 +2243,7 @@
   };
 
   // ========== TABS ==========
-  function showTab(event, id) {
+  function showTab(button, id) {
     const tabs = document.querySelectorAll('.tab');
     const buttons = document.querySelectorAll('[role="tab"]');
 
@@ -2253,7 +2253,7 @@
     const activeTab = document.getElementById(id);
     if (activeTab) {
       activeTab.classList.add('active');
-      const activeButton = event?.currentTarget || document.querySelector(`[aria-controls="${id}"]`);
+      const activeButton = button || document.querySelector(`[aria-controls="${id}"]`);
       if (activeButton) {
         activeButton.setAttribute('aria-selected', 'true');
       }
