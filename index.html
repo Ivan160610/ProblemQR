@@ -1757,10 +1757,14 @@
 
 <script>
   const DB_KEY = 'pro_max_db';
+  const DB_KEY = 'pro_max_db';
   const HISTORY_KEY = 'pro_max_history';
   const BACKUP_KEY = 'pro_max_backups';
   const THEME_KEY = 'pro_max_theme';
-  
+  const API_BASE = '/api';
+  const REMOTE_SYNC_ENABLED = true;
+  const REMOTE_SYNC_INTERVAL = 10000;
+
   let sortField = '';
   let searchTimeout;
   let currentPhoto = null;
@@ -1776,9 +1780,54 @@
     }
   };
 
+  const loadRemoteData = async () => {
+    if (!REMOTE_SYNC_ENABLED) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/db`, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки данных: ' + response.status);
+      }
+
+      const payload = await response.json();
+      const remoteData = Array.isArray(payload.data) ? payload.data : [];
+      const localData = db();
+
+      if (!remoteData.length && localData.length) {
+        await saveRemoteData(localData);
+        return;
+      }
+
+      if (remoteData.length && JSON.stringify(remoteData) !== JSON.stringify(localData)) {
+        localStorage.setItem(DB_KEY, JSON.stringify(remoteData));
+        render();
+      }
+    } catch (e) {
+      console.warn('Remote load failed:', e);
+    }
+  };
+
+  const saveRemoteData = async (data) => {
+    if (!REMOTE_SYNC_ENABLED) return;
+
+    try {
+      const response = await fetch(`${API_BASE}/db`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data })
+      });
+      if (!response.ok) {
+        throw new Error('Ошибка сохранения данных: ' + response.status);
+      }
+    } catch (e) {
+      console.warn('Remote save failed:', e);
+    }
+  };
+
   const save = (data) => {
     try {
       localStorage.setItem(DB_KEY, JSON.stringify(data));
+      saveRemoteData(data);
       addToHistory('Данные обновлены');
     } catch (e) {
       alert('Ошибка сохранения: ' + e.message);
@@ -3077,6 +3126,12 @@
   });
 
   // Initialize
+  loadRemoteData();
+  setInterval(loadRemoteData, REMOTE_SYNC_INTERVAL);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) loadRemoteData();
+  });
+
   if (!isAuthenticated()) {
     showLoginOverlay();
   } else {
