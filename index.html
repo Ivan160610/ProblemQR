@@ -1757,7 +1757,6 @@
 
 <script>
   const DB_KEY = 'pro_max_db';
-  const DB_KEY = 'pro_max_db';
   const HISTORY_KEY = 'pro_max_history';
   const BACKUP_KEY = 'pro_max_backups';
   const THEME_KEY = 'pro_max_theme';
@@ -2046,6 +2045,7 @@
 
   function batchSetStatus(status) {
     if (!selectedItems.size) return;
+    const count = selectedItems.size;
     const data = db();
     selectedItems.forEach(code => {
       const item = data.find(x => x.code === code);
@@ -2054,7 +2054,7 @@
     save(data);
     selectedItems.clear();
     render();
-    addToHistory(`Статус изменён для ${selectedItems.size} записей`);
+    addToHistory(`Статус изменён для ${count} записей`);
   }
 
   function batchDelete() {
@@ -2253,8 +2253,9 @@
     const activeTab = document.getElementById(id);
     if (activeTab) {
       activeTab.classList.add('active');
-      if (event && event.currentTarget) {
-        event.currentTarget.setAttribute('aria-selected', 'true');
+      const activeButton = event?.currentTarget || document.querySelector(`[aria-controls="${id}"]`);
+      if (activeButton) {
+        activeButton.setAttribute('aria-selected', 'true');
       }
     }
   }
@@ -2332,7 +2333,9 @@
     });
 
     save(data);
-    document.getElementById('main').querySelectorAll('input, select').forEach(el => el.value = el.tagName === 'SELECT' ? 'Авто' : '');
+    document.getElementById('main').querySelectorAll('input').forEach(el => el.value = '');
+    document.getElementById('reason').value = 'Ошибка ШК';
+    document.getElementById('type').value = 'Авто';
     document.getElementById('main').querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
     removePhotoPreview();
     clearFormMessage();
@@ -2448,6 +2451,8 @@
 
     // Reset selection
     document.getElementById('selectAll').checked = false;
+    selectedItems.clear();
+    updateBatchControls();
   }
 
   // ========== ACTIONS ==========
@@ -3118,13 +3123,6 @@
   // ========== INIT ==========
   document.getElementById('photoInput').addEventListener('change', handlePhotoSelect);
   
-  // Close modal on Escape key
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-      closePhotoModal();
-    }
-  });
-
   // Initialize
   loadRemoteData();
   setInterval(loadRemoteData, REMOTE_SYNC_INTERVAL);
