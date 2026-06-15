@@ -1767,9 +1767,12 @@
       </div>
       <p class="storage-info">Текущий сервер: <strong id="currentApiBase"></strong></p>
       <p class="storage-info">Статус синхронизации: <strong id="remoteSyncStatus"></strong></p>
+      <div class="row" style="gap:10px; flex-wrap: wrap; margin-top:10px;">
+        <button type="button" onclick="manualSync()">Синхронизировать</button>
+      </div>
     </div>
 
-    <div style="border-top: 1px solid var(--border); padding: 15px 0;">
+    <div style="border-top: 1px solid var(--border); padding: 15px 0;"
       <h3>ℹ️ Информация</h3>
       <p>Версия: <strong>2.0</strong></p>
       <p>Хранилище: <strong id="storageSize">0</strong> КБ из <strong>~5000</strong> КБ</p>
@@ -1784,7 +1787,9 @@
   const HISTORY_KEY = 'pro_max_history';
   const BACKUP_KEY = 'pro_max_backups';
   const THEME_KEY = 'pro_max_theme';
-  const DEFAULT_API_BASE = window.location.protocol.startsWith('http') ? window.location.origin + '/api' : '/api';
+  const DEFAULT_API_BASE = window.location.protocol.startsWith('http') && (window.location.port === '3000' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? window.location.origin + '/api'
+    : '';
   let API_BASE = localStorage.getItem('pro_max_api') || DEFAULT_API_BASE;
   const REMOTE_SYNC_ENABLED = true;
   const REMOTE_SYNC_INTERVAL = 10000;
@@ -1806,6 +1811,10 @@
 
   const loadRemoteData = async () => {
     if (!REMOTE_SYNC_ENABLED) return;
+    if (!API_BASE) {
+      setSyncStatus('Сервер синхронизации не задан. Введите URL и нажмите Сохранить.', true);
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE}/db`, { cache: 'no-store' });
@@ -1835,6 +1844,10 @@
 
   const saveRemoteData = async (data) => {
     if (!REMOTE_SYNC_ENABLED) return;
+    if (!API_BASE) {
+      setSyncStatus('Сервер синхронизации не задан. Введите URL и нажмите Сохранить.', true);
+      return;
+    }
 
     try {
       const response = await fetch(`${API_BASE}/db`, {
@@ -1845,6 +1858,7 @@
       if (!response.ok) {
         throw new Error('Ошибка сохранения данных: ' + response.status);
       }
+      setSyncStatus('Данные отправлены на сервер', false);
     } catch (e) {
       console.warn('Remote save failed:', e);
       setSyncStatus('Ошибка отправки данных на сервер', true);
@@ -1945,6 +1959,11 @@
     API_BASE = '/api';
     updateApiBaseUI();
     alert('Сервер сброшен. Используется локальный \'/api\'');
+  }
+
+  function manualSync() {
+    setSyncStatus('Синхронизирую...', false);
+    loadRemoteData();
   }
 
   function setSyncStatus(text, isError = false) {
