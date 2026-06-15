@@ -1369,6 +1369,19 @@
       .storage-info {
         font-size: 0.88rem;
       }
+
+      .copy-btn {
+        display: none;
+      }
+
+      .input-with-button {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .input-with-button input {
+        flex: none;
+      }
     }
 
     @media (max-width: 480px) {
@@ -3022,12 +3035,6 @@
         });
       })
       .catch(err => console.log('Ошибка Service Worker:', err));
-
-    const AUTO_RELOAD_INTERVAL = 10000; // 10 секунд
-    setInterval(() => {
-      console.log('Авто-проверка обновлений...');
-      window.location.reload();
-    }, AUTO_RELOAD_INTERVAL);
   }
 
   // ========== KEYBOARD SHORTCUTS ==========
@@ -3148,31 +3155,8 @@
   }
 
   // ========== AUTO UPDATE CHECK ==========
-  // Проверка обновлений каждые 5 секунд
-  let lastVersion = Date.now();
-  
-  function checkForUpdates() {
-    fetch(window.location.href + '?check=' + Math.random(), {
-      method: 'HEAD',
-      cache: 'no-store'
-    })
-    .then(response => {
-      const currentVersion = new Date(response.headers.get('last-modified') || Date.now()).getTime();
-      
-      if (currentVersion > lastVersion && lastVersion !== Date.now()) {
-        console.log('🔄 Обнаружено обновление, перезагружаю страницу...');
-        lastVersion = currentVersion;
-        // Добавляем задержку 1 сек для стабильности
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      }
-    })
-    .catch(err => console.log('Проверка обновлений:', err));
-  }
-
-  // Запускаем проверку обновлений каждые 5 секунд
-  setInterval(checkForUpdates, 5000);
+  // Проверка обновлений выключена для удобства ввода данных
+  // Синхронизация происходит автоматически через loadRemoteData() каждые 10 секунд
 
   // ========== INIT ==========
   document.getElementById('photoInput').addEventListener('change', handlePhotoSelect);
