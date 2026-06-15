@@ -1574,10 +1574,10 @@
       <div class="field-group">
         <label for="type">Тип товара</label>
         <select id="type" aria-label="Тип товара">
-          <option value="Авто">Автоопределение</option>
-          <option>Пиво/напитки</option>
-          <option>Продукты</option>
-          <option>Другое</option>
+          <option>🍺 Пиво/напитки</option>
+          <option>🥗 Продукты</option>
+          <option>🍷 Алкогольная продукция</option>
+          <option>❓ Другое</option>
         </select>
       </div>
     </div>
@@ -1765,6 +1765,9 @@
         <button type="button" onclick="saveApiBase()">Сохранить</button>
         <button type="button" onclick="clearApiBase()">Сбросить</button>
       </div>
+      <div class="row" style="margin-top:10px;">
+        <input id="apiKeyInput" placeholder="API ключ (опционально)" aria-label="API Key" style="flex:1; padding:10px;">
+      </div>
       <p class="storage-info">Текущий сервер: <strong id="currentApiBase"></strong></p>
       <p class="storage-info">Статус синхронизации: <strong id="remoteSyncStatus"></strong></p>
       <div class="row" style="gap:10px; flex-wrap: wrap; margin-top:10px;">
@@ -1782,6 +1785,7 @@
   </div>
 </div>
 
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   const DB_KEY = 'pro_max_db';
   const HISTORY_KEY = 'pro_max_history';
@@ -1791,8 +1795,11 @@
     ? window.location.origin + '/api'
     : '';
   let API_BASE = localStorage.getItem('pro_max_api') || DEFAULT_API_BASE;
+  let API_KEY = localStorage.getItem('pro_max_key') || '';
   const REMOTE_SYNC_ENABLED = true;
   const REMOTE_SYNC_INTERVAL = 10000;
+
+  let __socket = null;
 
   let sortField = '';
   let searchTimeout;
@@ -1817,7 +1824,9 @@
     }
 
     try {
-      const response = await fetch(`${API_BASE}/db`, { cache: 'no-store' });
+      const headers = {};
+      if (API_KEY) headers['X-API-KEY'] = API_KEY;
+      const response = await fetch(`${API_BASE}/db`, { cache: 'no-store', headers });
       if (!response.ok) {
         throw new Error('Ошибка загрузки данных: ' + response.status);
       }
@@ -1850,9 +1859,11 @@
     }
 
     try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (API_KEY) headers['X-API-KEY'] = API_KEY;
       const response = await fetch(`${API_BASE}/db`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ data })
       });
       if (!response.ok) {
@@ -1948,15 +1959,19 @@
     val = val.replace(/\/$/, '');
     // Ensure API base ends with /api
     if (!val.endsWith('/api')) val = val + '/api';
+    const keyVal = (document.getElementById('apiKeyInput')?.value || '').trim();
+    if (keyVal) localStorage.setItem('pro_max_key', keyVal); else localStorage.removeItem('pro_max_key');
     localStorage.setItem('pro_max_api', val);
     API_BASE = localStorage.getItem('pro_max_api');
+    API_KEY = localStorage.getItem('pro_max_key') || '';
     updateApiBaseUI();
     alert('Сервер сохранён. Данные будут синхронизироваться с: ' + API_BASE);
+    setTimeout(initSocket, 300);
   }
 
   function clearApiBase() {
     localStorage.removeItem('pro_max_api');
-    API_BASE = '/api';
+    API_BASE = '';
     updateApiBaseUI();
     alert('Сервер сброшен. Используется локальный \'/api\'');
   }
@@ -1964,6 +1979,41 @@
   function manualSync() {
     setSyncStatus('Синхронизирую...', false);
     loadRemoteData();
+  }
+
+  function initSocket() {
+    try {
+      if (!API_BASE) return;
+      const base = API_BASE.replace(/\/api\/?$/,'');
+      // prefer socket.io if available
+      if (typeof io !== 'undefined') {
+        try {
+          if (__socket) { try { __socket.disconnect(); } catch(e){} }
+          __socket = io(base);
+          __socket.on('connect', () => setSyncStatus('Сокет: подключено', false));
+          __socket.on('dbUpdated', () => { setSyncStatus('Обнаружены обновления, загружаю...', false); loadRemoteData(); });
+          __socket.on('disconnect', () => setSyncStatus('Сокет: отключено', true));
+          return;
+        } catch (e) {
+          console.warn('Socket.io init failed', e);
+        }
+      }
+
+      // fallback to Server-Sent Events
+      try {
+        if (window.__esource) try { window.__esource.close(); } catch(e){}
+        const esUrl = base + '/events';
+        const es = new EventSource(esUrl);
+        window.__esource = es;
+        es.onopen = () => setSyncStatus('SSE: подключено', false);
+        es.addEventListener('dbUpdated', () => { setSyncStatus('Обнаружены обновления, загружаю...', false); loadRemoteData(); });
+        es.onerror = () => setSyncStatus('SSE: ошибка/отключено', true);
+      } catch (e) {
+        console.warn('SSE init failed', e);
+      }
+    } catch (e) {
+      console.warn('initSocket failed', e);
+    }
   }
 
   function setSyncStatus(text, isError = false) {
@@ -1975,9 +2025,11 @@
 
   function updateApiBaseUI() {
     const el = document.getElementById('currentApiBase');
-    if (el) el.textContent = API_BASE || DEFAULT_API_BASE;
+    if (el) el.textContent = API_BASE || 'не задан';
     const input = document.getElementById('apiBaseInput');
     if (input) input.value = localStorage.getItem('pro_max_api') || '';
+    const keyInput = document.getElementById('apiKeyInput');
+    if (keyInput) keyInput.value = localStorage.getItem('pro_max_key') || '';
     setSyncStatus('Ожидает подключения...', false);
   }
 

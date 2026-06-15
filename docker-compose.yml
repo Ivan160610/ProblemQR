@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  pro-max:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      # Optionally set API_KEY here for production
+      # - API_KEY=your_api_key_here
+    volumes:
+      - .:/app
