@@ -285,8 +285,104 @@
       transform: translateY(-1px);
     }
 
+    .input-with-button {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .input-with-button input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .copy-btn {
+      min-width: 56px;
+      border-radius: 12px;
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--text);
+      border: 2px solid transparent;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(99, 102, 241, 0.24);
+    }
+
+    .disabled-btn {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .form-message {
+      margin: 10px 0 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: rgba(99, 102, 241, 0.08);
+      color: var(--text);
+      font-size: 0.97rem;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-message:empty {
+      display: none;
+      margin: 0;
+      padding: 0;
+      min-height: 0;
+      border: 0;
+      background: none;
+    }
+
+    .form-message.error {
+      border-color: var(--danger);
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--danger);
+    }
+
+    .form-message.success {
+      border-color: var(--success);
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+    }
+
+    .field-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .tag-row {
+      flex: 1 1 100%;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      background: var(--card);
+    }
+
+    .table-info {
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(99, 102, 241, 0.08);
+      color: var(--text);
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
     table {
-      width: 100%;
+      min-width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
     }
@@ -324,6 +420,13 @@
     tbody tr:hover {
       background: rgba(99, 102, 241, 0.05);
       transform: scale(1.01);
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--card);
     }
 
     body.dark tbody tr:hover {
@@ -400,6 +503,97 @@
     .theme:hover {
       transform: scale(1.15) rotate(20deg);
       box-shadow: 0 8px 35px rgba(99, 102, 241, 0.4);
+    }
+
+    body.locked .theme,
+    body.locked .wrap {
+      display: none;
+    }
+
+    .login-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.92);
+      color: white;
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      color: var(--text);
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      padding: 32px;
+      text-align: left;
+    }
+
+    .login-card h2 {
+      margin-bottom: 16px;
+      font-size: 1.75rem;
+    }
+
+    .login-card p {
+      margin-bottom: 24px;
+      color: var(--text-light);
+    }
+
+    .login-card input {
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .login-card button {
+      width: 100%;
+    }
+
+    .login-fail-card {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      text-align: center;
+    }
+
+    .beer-emoji {
+      font-size: 3rem;
+      margin-bottom: 14px;
+    }
+
+    .login-fail-card h3 {
+      margin-bottom: 10px;
+      color: var(--danger);
+    }
+
+    .login-fail-card p {
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .login-fail-card button {
+      width: 100%;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .login-message {
+      min-height: 24px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+
+    .login-message.error {
+      color: var(--danger);
     }
 
     .batch-controls {
@@ -631,6 +825,21 @@
       border: 2px dashed var(--primary);
     }
 
+    .photo-preview:empty {
+      display: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+
+    #barcodeStatus:empty {
+      display: none;
+      margin: 0;
+      padding: 0;
+      height: 0;
+    }
+
     .photo-preview img {
       max-width: 200px;
       max-height: 200px;
@@ -663,21 +872,26 @@
     .checkbox-label input[type="checkbox"] {
       margin: 0;
       cursor: pointer;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       accent-color: var(--primary);
+      flex-shrink: 0;
     }
 
     .checkbox-label {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
-      padding: 4px 6px;
+      padding: 6px 8px;
       border-radius: 12px;
       transition: background 0.2s ease;
+    }
+
+    .checkbox-label span {
+      line-height: 1.2;
     }
 
     .checkbox-label:hover {
@@ -767,6 +981,88 @@
 
     .table-responsive td {
       transition: none;
+    }
+
+    .action-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .table-responsive {
+        border: none;
+        background: transparent;
+      }
+
+      .table-responsive table {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .table-responsive table,
+      .table-responsive thead,
+      .table-responsive tbody,
+      .table-responsive tr,
+      .table-responsive th,
+      .table-responsive td {
+        display: block;
+      }
+
+      .table-responsive tr {
+        margin-bottom: 14px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px;
+        background: var(--card);
+      }
+
+      body.dark .table-responsive tr {
+        background: var(--card-dark);
+        border-color: var(--border-dark);
+      }
+
+      .table-responsive th {
+        display: none;
+      }
+
+      .table-responsive td {
+        padding: 10px 0;
+        border: none;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        padding-left: 50%;
+      }
+
+      body.dark .table-responsive td {
+        border-color: var(--border-dark);
+      }
+
+      .table-responsive td:last-child {
+        border-bottom: none;
+      }
+
+      .table-responsive td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 44%;
+        padding-right: 10px;
+        font-weight: 700;
+        color: var(--primary);
+        white-space: normal;
+      }
+
+      .table-responsive td.photo-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .table-responsive td.photo-cell::before {
+        top: 0;
+      }
     }
 
     /* === МОБИЛЬНАЯ ОПТИМИЗАЦИЯ === */
@@ -1191,6 +1487,24 @@
   </style>
 </head>
 <body>
+<div class="login-overlay" id="loginOverlay" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <div class="login-card">
+    <h2 id="loginTitle">Вход в систему</h2>
+    <p>Введите логин и пароль, чтобы открыть приложение.</p>
+    <div id="loginMessage" class="login-message" aria-live="assertive"></div>
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <input id="loginName" type="text" placeholder="Логин" aria-label="Логин" autocomplete="username">
+      <input id="loginPassword" type="password" placeholder="Пароль" aria-label="Пароль" autocomplete="current-password">
+      <button type="submit">Войти</button>
+    </form>
+    <div id="loginFail" class="login-fail-card" style="display:none;">
+      <div class="beer-emoji">🍺</div>
+      <h3>Неверный логин или пароль</h3>
+      <p>Доступ закрыт. Проверьте данные и попробуйте ещё раз.</p>
+      <button type="button" onclick="resetLogin()">Попробовать ещё раз</button>
+    </div>
+  </div>
+</div>
 <div class="theme" id="themeBtn" role="button" aria-label="Переключить тему" title="Переключить между светлой и тёмной темой">🌙</div>
 
 <!-- Модальное окно для просмотра фото -->
@@ -1217,41 +1531,64 @@
   <div id="main" class="tab card active" role="tabpanel" aria-labelledby="tab-main">
     <h2>Добавить новую запись</h2>
     <div class="form-grid">
-      <input id="cell" placeholder="Ячейка отбора" aria-label="Ячейка отбора">
-      <input id="code" placeholder="Код товара" aria-label="Код товара">
-      <input id="name" placeholder="Наименование товара" aria-label="Наименование товара">
-      <select id="reason" aria-label="Причина проблемы">
-        <option value="Ошибка ШК">Ошибка ШК</option>
-        <option value="Неверное описание">Неверное описание</option>
-        <option value="Другое">Другое</option>
-      </select>
-      <input id="comment" placeholder="Комментарий" aria-label="Комментарий">
-      <select id="type" aria-label="Тип товара">
-        <option value="Авто">Автоопределение</option>
-        <option>Пиво/напитки</option>
-        <option>Продукты</option>
-        <option>Другое</option>
-      </select>
+      <div class="field-group">
+        <label for="cell">Ячейка отбора</label>
+        <input id="cell" placeholder="Ячейка отбора" aria-label="Ячейка отбора">
+      </div>
+      <div class="field-group input-with-button">
+        <div style="flex:1; min-width:0;">
+          <label for="code">Код товара</label>
+          <input id="code" placeholder="Код товара" aria-label="Код товара">
+        </div>
+        <button type="button" class="copy-btn" onclick="copyCodeToClipboard()" title="Скопировать код">📋</button>
+      </div>
+      <div class="field-group">
+        <label for="name">Наименование товара</label>
+        <input id="name" placeholder="Наименование товара" aria-label="Наименование товара">
+      </div>
+      <div class="field-group">
+        <label for="reason">Причина проблемы</label>
+        <select id="reason" aria-label="Причина проблемы">
+          <option value="Ошибка ШК">Ошибка ШК</option>
+          <option value="Неверное описание">Неверное описание</option>
+          <option value="Другое">Другое</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="comment">Комментарий</label>
+        <input id="comment" placeholder="Комментарий" aria-label="Комментарий">
+      </div>
+      <div class="field-group">
+        <label for="type">Тип товара</label>
+        <select id="type" aria-label="Тип товара">
+          <option value="Авто">Автоопределение</option>
+          <option>Пиво/напитки</option>
+          <option>Продукты</option>
+          <option>Другое</option>
+        </select>
+      </div>
     </div>
 
-    <div class="row" style="justify-content: space-between; align-items: flex-start; gap: 12px;">
-      <div class="tag-row" style="flex: 1 1 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: 14px; background: var(--card);">
+    <div id="formMessage" class="form-message" role="alert" aria-live="assertive"></div>
+
+    <div class="row row--gapless">
+      <div class="tag-row">
         <div class="checkbox-group" style="font-weight:700;">🏷️ Теги:</div>
-        <div class="checkbox-group" style="margin-top: 10px;">
-          <label class="checkbox-label"><input type="checkbox" id="tag-urgent" value="urgent">Срочно</label>
-          <label class="checkbox-label"><input type="checkbox" id="tag-checked" value="checked">Проверено</label>
-          <label class="checkbox-label"><input type="checkbox" id="tag-waiting" value="waiting">Ожидает</label>
-          <label class="checkbox-label"><input type="checkbox" id="tag-duplicate" value="duplicate">Дубликат</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="checkbox" id="tag-urgent" value="urgent"><span>Срочно</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="tag-checked" value="checked"><span>Проверено</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="tag-waiting" value="waiting"><span>Ожидает</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="tag-duplicate" value="duplicate"><span>Дубликат</span></label>
         </div>
       </div>
     </div>
 
     <div class="form-actions">
-      <div class="photo-input-wrapper" style="flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 10px;">
+      <div class="photo-input-wrapper">
         <button class="photo-btn" onclick="document.getElementById('photoInput').click()">📸 Выбрать фото</button>
-        <button class="photo-btn" onclick="startBarcodeScanner()">📷 Сканировать штрихкод</button>
+        <button class="photo-btn disabled-btn" disabled title="Функция в разработке">📷 Сканировать штрихкод (в разработке)</button>
         <button class="photo-btn" id="stopBarcodeBtn" style="display:none; background: linear-gradient(135deg, #ef4444, #dc2626);" onclick="stopBarcodeScanner()">✕ Остановить</button>
-        <input type="file" id="photoInput" accept="image/*" aria-label="Загрузить фото товара">
+        <input type="file" id="photoInput" accept="image/*" aria-label="Загрузить фото товара" onchange="handlePhotoSelect(event)">
         <input type="file" id="barcodeInput" accept="image/*" capture="environment" style="display:none" aria-label="Загрузить фото штрихкода" onchange="handleBarcodeImage(event)">
       </div>
       <video id="barcodeVideo" autoplay playsinline style="display:none; width:100%; max-width:420px; margin-top:10px; border-radius:14px; background:#000;"></video>
@@ -1275,15 +1612,15 @@
         <option value="fixed">Исправлено</option>
       </select>
     </div>
-
+    <div id="tableInfo" class="table-info">Показано 0 записей. Используй поиск и фильтры для быстрого доступа.</div>
     <div class="row">
       <label>📅 От: <input type="date" id="dateFrom" onchange="render()"></label>
       <label>До: <input type="date" id="dateTo" onchange="render()"></label>
       <div class="checkbox-group" style="align-items: center;">
         <span style="font-weight: 700; white-space: nowrap;">🏷️ Теги:</span>
-        <label class="checkbox-label"><input type="checkbox" id="filter-urgent" value="urgent" onchange="render()">Срочно</label>
-        <label class="checkbox-label"><input type="checkbox" id="filter-checked" value="checked" onchange="render()">Проверено</label>
-        <label class="checkbox-label"><input type="checkbox" id="filter-waiting" value="waiting" onchange="render()">Ожидает</label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-urgent" value="urgent" onchange="render()"><span>Срочно</span></label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-checked" value="checked" onchange="render()"><span>Проверено</span></label>
+        <label class="checkbox-label"><input type="checkbox" id="filter-waiting" value="waiting" onchange="render()"><span>Ожидает</span></label>
       </div>
     </div>
 
@@ -1413,6 +1750,7 @@
       <p>Версия: <strong>2.0</strong></p>
       <p>Хранилище: <strong id="storageSize">0</strong> КБ из <strong>~5000</strong> КБ</p>
       <button onclick="clearCache()">🧹 Очистить кэш</button>
+      <button onclick="logout()" style="margin-top: 10px; background: linear-gradient(135deg, #f59e0b, #d97706);">🔓 Выйти</button>
     </div>
   </div>
 </div>
@@ -1671,12 +2009,14 @@
   }
 
   function batchDelete() {
+    if (!requireAuthAction()) return;
     if (!selectedItems.size) return;
     if (!confirm(`Удалить ${selectedItems.size} записей?`)) return;
     save(db().filter(x => !selectedItems.has(x.code)));
+    const deleted = selectedItems.size;
     selectedItems.clear();
     render();
-    addToHistory(`Удалено ${selectedItems.size} записей`);
+    addToHistory(`Удалено ${deleted} записей`);
   }
 
   // ========== PHOTO HANDLING ==========
@@ -1884,17 +2224,42 @@
     return 'Другое';
   }
 
+  function showFormMessage(text, type = 'success') {
+    const messageEl = document.getElementById('formMessage');
+    if (!messageEl) return;
+    messageEl.textContent = text;
+    messageEl.className = `form-message ${type === 'error' ? 'error' : 'success'}`;
+  }
+
+  function clearFormMessage() {
+    const messageEl = document.getElementById('formMessage');
+    if (!messageEl) return;
+    messageEl.textContent = 'Заполните форму и нажмите «Внести».';
+    messageEl.className = 'form-message';
+  }
+
+  function validateMainForm() {
+    const code = document.getElementById('code').value.trim();
+    if (!code) {
+      showFormMessage('Ошибка: код товара обязателен.', 'error');
+      return false;
+    }
+    const name = document.getElementById('name').value.trim();
+    if (!name) {
+      showFormMessage('Ошибка: наименование товара обязателен.', 'error');
+      return false;
+    }
+    return true;
+  }
+
   function addItem() {
+    if (!validateMainForm()) return;
+
     const data = db();
     const code = document.getElementById('code').value.trim();
 
-    if (!code) {
-      alert('Заполните код товара');
-      return;
-    }
-
     if (data.some(x => x.code === code)) {
-      alert('Такой код товара уже существует');
+      showFormMessage('Ошибка: такой код товара уже существует.', 'error');
       return;
     }
 
@@ -1921,9 +2286,11 @@
     document.getElementById('main').querySelectorAll('input, select').forEach(el => el.value = el.tagName === 'SELECT' ? 'Авто' : '');
     document.getElementById('main').querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
     removePhotoPreview();
+    clearFormMessage();
     render();
     showTab(null, 'table');
     addToHistory('Запись добавлена', code);
+    setTimeout(() => clearFormMessage(), 5000);
   }
 
   // ========== SORTING & FILTERING ==========
@@ -1935,6 +2302,12 @@
   function handleSearch() {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(render, 300);
+  }
+
+  function updateTableInfo(count, total) {
+    const info = document.getElementById('tableInfo');
+    if (!info) return;
+    info.textContent = `Показано ${count} из ${total} записей.`;
   }
 
   function render() {
@@ -1985,7 +2358,7 @@
 
       const statusBadge = item.status === 'fixed' ? '🟢 Исправлено' : '🔴 Проблема';
       const photoCell = item.photo 
-        ? `<img src="${item.photo}" alt="фото" class="photo-thumb" onclick="openPhotoModal('${item.photo.replace(/'/g, "\\'")}'">`
+        ? `<img src="${item.photo}" alt="фото" class="photo-thumb" onclick="openPhotoModal('${item.photo.replace(/'/g, "\\'")}')">`
         : '<span style="color: #999;">нет</span>';
 
       row.innerHTML = `
@@ -1998,7 +2371,7 @@
         <td data-label="Теги">${renderTags(item.tags)}</td>
         <td data-label="Фото" class="photo-cell">${photoCell}</td>
         <td data-label="Дата">${escapeHtml(item.date)}</td>
-        <td data-label="Действия" style="white-space: nowrap;">
+        <td data-label="Действия" class="action-cell">
           <button onclick="toggleStatus('${escapeHtml(item.code)}')" title="Переключить статус" style="padding: 6px 8px; font-size: 0.8rem;">Статус</button>
           <button onclick="editItem('${escapeHtml(item.code)}')" title="Редактировать" style="padding: 6px 8px; font-size: 0.8rem;">Изменить</button>
           ${item.photo ? `<button onclick="removeItemPhoto('${escapeHtml(item.code)}')" title="Удалить фото" style="padding: 6px 8px; font-size: 0.8rem;">📸❌</button>` : `<button onclick="addPhotoToItem('${escapeHtml(item.code)}')" title="Добавить фото" style="padding: 6px 8px; font-size: 0.8rem;">📸➕</button>`}
@@ -2018,6 +2391,7 @@
     document.getElementById('st2').textContent = fixed;
     document.getElementById('st3').textContent = active;
     document.getElementById('st4').textContent = uniqueCells;
+    updateTableInfo(total, data.length);
 
     // Update analytics
     updateAnalytics();
@@ -2329,12 +2703,14 @@
   });
 
   function removeItem(code) {
+    if (!requireAuthAction()) return;
     if (!confirm('Удалить эту запись?')) return;
     save(db().filter(x => x.code !== code));
     render();
   }
 
   function clearDB() {
+    if (!requireAuthAction()) return;
     if (!confirm('Вы уверены? Это удалит ВСЕ данные!')) return;
     localStorage.removeItem(DB_KEY);
     render();
@@ -2367,10 +2743,106 @@
         alert('Нет данных для экспорта');
         return;
       }
-      const ws = XLSX.utils.json_to_sheet(data);
+
+      const headers = [
+        'Ячейка',
+        'Код товара',
+        'Наименование',
+        'Тип',
+        'Причина',
+        'Комментарий',
+        'Теги',
+        'Статус',
+        'Дата'
+      ];
+
+      const rows = data.map(item => ({
+        'Ячейка': item.cell || '',
+        'Код товара': item.code || '',
+        'Наименование': item.name || '',
+        'Тип': item.type || '',
+        'Причина': item.reason || '',
+        'Комментарий': item.comment || '',
+        'Теги': (item.tags || []).join(', '),
+        'Статус': item.status === 'fixed' ? 'Исправлено' : 'Проблема',
+        'Дата': item.date || ''
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Данные');
+
+      // Стили и границы
+      const headerStyle = {
+        font: { bold: true, color: { rgb: 'FFFFFF' }, size: 12 },
+        fill: { fgColor: { rgb: '4f46e5' } },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+        border: {
+          left: { style: 'thin', color: { rgb: '000000' } },
+          right: { style: 'thin', color: { rgb: '000000' } },
+          top: { style: 'thin', color: { rgb: '000000' } },
+          bottom: { style: 'thin', color: { rgb: '000000' } }
+        }
+      };
+
+      const cellStyle = {
+        alignment: { horizontal: 'left', vertical: 'top', wrapText: true },
+        border: {
+          left: { style: 'thin', color: { rgb: 'cccccc' } },
+          right: { style: 'thin', color: { rgb: 'cccccc' } },
+          top: { style: 'thin', color: { rgb: 'cccccc' } },
+          bottom: { style: 'thin', color: { rgb: 'cccccc' } }
+        }
+      };
+
+      const alternateStyle = {
+        ...cellStyle,
+        fill: { fgColor: { rgb: 'f3f4f6' } }
+      };
+
+      const sheetRange = XLSX.utils.decode_range(ws['!ref']);
+      
+      // Применяем стиль заголовкам (первая строка)
+      for (let C = sheetRange.s.c; C <= sheetRange.e.c; ++C) {
+        const headerCell = ws[XLSX.utils.encode_cell({ c: C, r: 0 })];
+        if (headerCell) {
+          headerCell.s = headerStyle;
+        }
+      }
+
+      // Применяем стиль данным с чередованием цветов
+      for (let R = sheetRange.s.r + 1; R <= sheetRange.e.r; ++R) {
+        for (let C = sheetRange.s.c; C <= sheetRange.e.c; ++C) {
+          const cell = ws[XLSX.utils.encode_cell({ c: C, r: R })];
+          if (cell) {
+            cell.s = (R % 2 === 0) ? alternateStyle : cellStyle;
+          }
+        }
+      }
+
+      // Ширина столбцов
+      const colWidths = headers.map(header => ({ wch: Math.max(header.length, 12) }));
+      for (let C = sheetRange.s.c; C <= sheetRange.e.c; ++C) {
+        let maxLength = headers[C].length;
+        for (let R = sheetRange.s.r + 1; R <= sheetRange.e.r; ++R) {
+          const cell = ws[XLSX.utils.encode_cell({ c: C, r: R })];
+          if (cell && cell.v) {
+            maxLength = Math.max(maxLength, String(cell.v).length);
+          }
+        }
+        colWidths[C] = { wch: Math.min(maxLength + 2, 50) };
+      }
+      ws['!cols'] = colWidths;
+
+      // Высота строк
+      ws['!rows'] = [{ hpt: 25 }]; // Заголовок выше
+      for (let R = sheetRange.s.r + 1; R <= sheetRange.e.r; ++R) {
+        if (!ws['!rows']) ws['!rows'] = [];
+        ws['!rows'][R] = { hpt: 20 };
+      }
+
       XLSX.writeFile(wb, 'pro_max_' + new Date().toISOString().split('T')[0] + '.xlsx');
+      addToHistory('Excel файл экспортирован');
     } catch (e) {
       alert('Ошибка экспорта Excel: ' + e.message);
     }
@@ -2442,6 +2914,12 @@
         });
       })
       .catch(err => console.log('Ошибка Service Worker:', err));
+
+    const AUTO_RELOAD_INTERVAL = 10000; // 10 секунд
+    setInterval(() => {
+      console.log('Авто-проверка обновлений...');
+      window.location.reload();
+    }, AUTO_RELOAD_INTERVAL);
   }
 
   // ========== KEYBOARD SHORTCUTS ==========
@@ -2461,12 +2939,132 @@
   });
 
   // ========== UTILITIES ==========
+  function copyCodeToClipboard() {
+    const codeInput = document.getElementById('code');
+    if (!codeInput) return;
+    const value = codeInput.value.trim();
+    if (!value) {
+      showFormMessage('Нечего копировать: сначала введите код.', 'error');
+      return;
+    }
+    navigator.clipboard.writeText(value)
+      .then(() => showFormMessage('Код товара скопирован в буфер обмена.'))
+      .catch(() => showFormMessage('Не удалось скопировать код.', 'error'));
+  }
+
+  const AUTH_KEY = 'pro_max_auth';
+  const AUTH_USER = 'Bondarev';
+  const AUTH_PASSWORD = '147963';
+
+  function isAuthenticated() {
+    return localStorage.getItem(AUTH_KEY) === 'true';
+  }
+
+  function setAuthenticated(value) {
+    localStorage.setItem(AUTH_KEY, value ? 'true' : 'false');
+  }
+
+  function requireAuthAction() {
+    if (!isAuthenticated()) {
+      showLoginOverlay();
+      return false;
+    }
+    return true;
+  }
+
+  function showLoginOverlay() {
+    document.body.classList.add('locked');
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('loginPassword').focus();
+  }
+
+  function hideLoginOverlay() {
+    document.body.classList.remove('locked');
+    document.getElementById('loginOverlay').style.display = 'none';
+  }
+
+  function handleLogin(event) {
+    event.preventDefault();
+    const name = document.getElementById('loginName').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const messageEl = document.getElementById('loginMessage');
+    const failCard = document.getElementById('loginFail');
+    const loginForm = document.getElementById('loginForm');
+
+    if (name !== AUTH_USER || password !== AUTH_PASSWORD) {
+      messageEl.textContent = '';
+      failCard.style.display = 'block';
+      loginForm.style.display = 'none';
+      return false;
+    }
+
+    setAuthenticated(true);
+    hideLoginOverlay();
+    messageEl.textContent = '';
+    failCard.style.display = 'none';
+    loginForm.style.display = 'block';
+    render();
+    updateAnalytics();
+    updateHistoryTab();
+    return false;
+  }
+
+  function resetLogin() {
+    const failCard = document.getElementById('loginFail');
+    const loginForm = document.getElementById('loginForm');
+    const nameInput = document.getElementById('loginName');
+    const passwordInput = document.getElementById('loginPassword');
+    const messageEl = document.getElementById('loginMessage');
+
+    failCard.style.display = 'none';
+    loginForm.style.display = 'block';
+    messageEl.textContent = '';
+    messageEl.className = 'login-message';
+    nameInput.value = '';
+    passwordInput.value = '';
+    nameInput.focus();
+  }
+
+  function logout() {
+    if (!confirm('Выйти из системы?')) return;
+    setAuthenticated(false);
+    showLoginOverlay();
+  }
+
   function clearCache() {
     if (!confirm('Это очистит весь кэш приложения. Продолжить?')) return;
     localStorage.clear();
+    setAuthenticated(false);
     alert('✅ Кэш очищен. Перезагружаю страницу...');
     location.reload();
   }
+
+  // ========== AUTO UPDATE CHECK ==========
+  // Проверка обновлений каждые 5 секунд
+  let lastVersion = Date.now();
+  
+  function checkForUpdates() {
+    fetch(window.location.href + '?check=' + Math.random(), {
+      method: 'HEAD',
+      cache: 'no-store'
+    })
+    .then(response => {
+      const currentVersion = new Date(response.headers.get('last-modified') || Date.now()).getTime();
+      
+      if (currentVersion > lastVersion && lastVersion !== Date.now()) {
+        console.log('🔄 Обнаружено обновление, перезагружаю страницу...');
+        lastVersion = currentVersion;
+        // Добавляем задержку 1 сек для стабильности
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    })
+    .catch(err => console.log('Проверка обновлений:', err));
+  }
+
+  // Запускаем проверку обновлений каждые 5 секунд
+  setInterval(checkForUpdates, 5000);
 
   // ========== INIT ==========
   document.getElementById('photoInput').addEventListener('change', handlePhotoSelect);
@@ -2479,11 +3077,14 @@
   });
 
   // Initialize
-  render();
-  updateAnalytics();
-  updateHistoryTab();
-  updateThemeButtons();
-</script>
+  if (!isAuthenticated()) {
+    showLoginOverlay();
+  } else {
+    render();
+    updateAnalytics();
+    updateHistoryTab();
+    updateThemeButtons();
+  }
 </script>
 </body>
 </html>
